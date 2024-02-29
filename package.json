@@ -1,4 +1,5 @@
 {
+  "name": "test",
   "devDependencies": {
     "danger": "^11.3.1"
   }
