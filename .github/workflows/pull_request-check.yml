@@ -8,7 +8,9 @@ concurrency:
   cancel-in-progress: true
 
 permissions:
+  id-token: 
   pull-requests: write
+
 
 jobs:
   checkout:
@@ -17,11 +19,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-  Damger-JS:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Danger-JS
+      - name: Danger JS
         # usesがエラーになるissues解決待ち
         # https://github.com/github/vscode-github-actions/issues/143
         uses: danger/danger-js@11.3.1
