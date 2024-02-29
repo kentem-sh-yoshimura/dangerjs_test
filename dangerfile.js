@@ -49,9 +49,9 @@ schedule(async () => {
     const removeDependencies = diffObject(beforeDependencies, afterDependencies)
     const addDependencies = diffObject(afterDependencies, beforeDependencies)
     if (removeDependencies.length)
-      message(`removeDependencies ${removeDependencies.join(', ')}`)
+      message(`Dependencies削除: ${removeDependencies.join(', ')}`)
     if (addDependencies.length)
-      message(`addDependencies ${addDependencies.join(', ')}`)
+      message(`Dependencies追加: ${addDependencies.join(', ')}`)
   }
 
   if (beforeDevDependencies && afterDevDependencies) {
@@ -64,8 +64,8 @@ schedule(async () => {
       beforeDevDependencies,
     )
     if (removeDevDependencies.length)
-      message(`removeDevDependencies ${removeDevDependencies.join(', ')}`)
+      message(`DevDependencies削除: ${removeDevDependencies.join(', ')}`)
     if (addDevDependencies.length)
-      message(`addDevDependencies ${addDevDependencies.join(', ')}`)
+      message(`DevDependencies追加: ${addDevDependencies.join(', ')}`)
   }
 })
