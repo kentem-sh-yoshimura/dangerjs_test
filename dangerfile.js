@@ -9,9 +9,9 @@ const diffObject = (obj1, obj2) => {
   obj1Entries.forEach((obj1Entry) => {
     const obj1EntryString = `${obj1Entry[0]}: ${obj1Entry[1]}`
     if (
-      obj2Entries.some((obj2Entry) => {
+      !obj2Entries.some((obj2Entry) => {
         const obj2EntryString = `${obj2Entry[0]}: ${obj2Entry[1]}`
-        return obj1EntryString !== obj2EntryString
+        return obj1EntryString === obj2EntryString
       })
     )
       result.push(obj1EntryString)
