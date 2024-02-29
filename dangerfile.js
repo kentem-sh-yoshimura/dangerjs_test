@@ -53,10 +53,10 @@ schedule(async () => {
   const beforeDevDependencies = packageDiff.devDependencies?.before
   const afterDevDependencies = packageDiff.devDependencies?.after
 
-  if(beforeDependencies)message(JSON.stringify(beforeDependencies))
-  if(afterDependencies)message(JSON.stringify(afterDependencies))
-  if(beforeDevDependencies)message(JSON.stringify(beforeDevDependencies))
-  if(afterDevDependencies)message(JSON.stringify(afterDevDependencies))
+  if(beforeDependencies)message(`1 ${JSON.stringify(beforeDependencies)}`)
+  if(afterDependencies)message(`2 ${JSON.stringify(afterDependencies)}`)
+  if(beforeDevDependencies)message(`3 ${JSON.stringify(beforeDevDependencies)}`)
+  if(afterDevDependencies)message(`4 ${JSON.stringify(afterDevDependencies)}`)
 
   if (beforeDependencies && afterDependencies) {
     const removeDependencies = diffJson(
@@ -67,8 +67,8 @@ schedule(async () => {
       afterDependencies,
       beforeDependencies,
     ).toString()
-    if (removeDependencies) message(removeDependencies)
-    if (addDependencies) message(addDependencies)
+    if (removeDependencies) message(`5 ${removeDependencies}`)
+    if (addDependencies) message(`6 ${addDependencies}`)
   }
   if (beforeDevDependencies && afterDevDependencies) {
     const removeDevDependencies = diffJson(
@@ -79,7 +79,7 @@ schedule(async () => {
       afterDevDependencies,
       beforeDevDependencies,
     ).toString()
-    if (removeDevDependencies) message(removeDevDependencies)
-    if (addDevDependencies) message(addDevDependencies)
+    if (removeDevDependencies) message(`7 ${removeDevDependencies}`)
+    if (addDevDependencies) message(`8 ${addDevDependencies}`)
   }
 })
