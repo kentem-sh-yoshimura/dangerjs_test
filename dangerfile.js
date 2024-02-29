@@ -1,26 +1,23 @@
 import { danger, message, schedule, warn } from 'danger'
 
-const diffJson = (obj1, obj2) => {
-  const diff = {}
+// obj2にない、obj1のエントリを抽出
+const diffObject = (obj1, obj2) => {
+  const obj1Entries = Object.entries(obj1)
+  const obj2Entries = Object.entries(obj2)
 
-  for (const key in obj1)
-    if (obj1.hasOwnProperty(key)) {
-      const value1 = obj1[key]
-      const value2 = obj2[key]
-
-      if (value1 instanceof Object && value2 instanceof Object) {
-        const nestedDiff = diffJson(value1, value2)
-        if (Object.keys(nestedDiff).length > 0) diff[key] = nestedDiff
-      } else if (value1 !== value2)
-        if(value2 !== undefined)value2
-    }
-
-  for (const key in obj2)
-    if (obj2.hasOwnProperty(key) && !obj1.hasOwnProperty(key))
-      diff[key] = obj2[key]
-
-  return diff
-} 
+  const result = []
+  obj1Entries.forEach((obj1Entry) => {
+    const obj1EntryString = `${obj1Entry[0]}: ${obj1Entry[1]}`
+    if (
+      obj2Entries.some((obj2Entry) => {
+        const obj2EntryString = `${obj2Entry[0]}: ${obj2Entry[1]}`
+        return obj1EntryString !== obj2EntryString
+      })
+    )
+      result.push(obj1EntryString)
+  })
+  return result
+}
 
 const hasModifiedPackageJson =
   danger.git.modified_files.includes('package.json')
@@ -49,27 +46,26 @@ schedule(async () => {
   const afterDevDependencies = packageDiff.devDependencies?.after
 
   if (beforeDependencies && afterDependencies) {
-    const removeDependencies = diffJson(
-      beforeDependencies,
-      afterDependencies,
-    )
-    const addDependencies = diffJson(
-      afterDependencies,
-      beforeDependencies,
-    )
-    if (removeDependencies) message(`5 ${JSON.stringify(removeDependencies)}`)
-    if (addDependencies) message(`6 ${JSON.stringify(addDependencies)}`)
+    const removeDependencies = diffObject(beforeDependencies, afterDependencies)
+    const addDependencies = diffObject(afterDependencies, beforeDependencies)
+    if (removeDependencies.length)
+      message(`removeDependencies ${removeDependencies.join(', ')}`)
+    if (addDependencies.length)
+      message(`addDependencies ${addDependencies.join(', ')}`)
   }
+
   if (beforeDevDependencies && afterDevDependencies) {
-    const removeDevDependencies = diffJson(
+    const removeDevDependencies = diffObject(
       beforeDevDependencies,
       afterDevDependencies,
     )
-    const addDevDependencies = diffJson(
+    const addDevDependencies = diffObject(
       afterDevDependencies,
       beforeDevDependencies,
     )
-    if (removeDevDependencies) message(`7 ${JSON.stringify(removeDevDependencies)}`)
-    if (addDevDependencies) message(`8 ${JSON.stringify(addDevDependencies)}`)
+    if (removeDevDependencies.length)
+      message(`removeDevDependencies ${removeDevDependencies.join(', ')}`)
+    if (addDevDependencies.length)
+      message(`addDevDependencies ${addDevDependencies.join(', ')}`)
   }
 })
