@@ -1,8 +1,8 @@
 import { danger, message, schedule, warn } from 'danger'
 
-const diffJson = (obj1: Record<string, any>, obj2: Record<string, any>): Object => {
-  const diff:Record<string, any> = {}
-  
+const diffJson = (obj1, obj2) => {
+  const diff = {}
+
   for (const key in obj1)
     if (obj1.hasOwnProperty(key)) {
       const value1 = obj1[key]
