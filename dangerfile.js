@@ -1,7 +1,7 @@
 import { danger, message, schedule, warn } from 'danger'
 
-const diffJson = (obj1: Object, obj2: Object): Object => {
-  const diff: Object = {}
+const diffJson = (obj1, obj2) => {
+  const diff = {}
 
   for (const key in obj1)
     if (obj1.hasOwnProperty(key)) {
@@ -20,7 +20,7 @@ const diffJson = (obj1: Object, obj2: Object): Object => {
       diff[key] = obj2[key]
 
   return diff
-}
+} 
 
 const hasModifiedPackageJson =
   danger.git.modified_files.includes('package.json')
