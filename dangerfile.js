@@ -1,22 +1,33 @@
 import { danger, message, schedule, warn } from 'danger'
 
-// obj2にない、obj1のエントリを抽出
-const diffObject = (obj1, obj2) => {
-  const obj1Entries = Object.entries(obj1)
-  const obj2Entries = Object.entries(obj2)
+const diffDependencies = (before, after) => {
+  const beforeEntries = Object.entries(before)
+  const afterEntries = Object.entries(after)
 
-  const result = []
-  obj1Entries.forEach((obj1Entry) => {
-    const obj1EntryString = `${obj1Entry[0]}: ${obj1Entry[1]}`
-    if (
-      !obj2Entries.some((obj2Entry) => {
-        const obj2EntryString = `${obj2Entry[0]}: ${obj2Entry[1]}`
-        return obj1EntryString === obj2EntryString
-      })
-    )
-      result.push(obj1EntryString)
+  const addDependencies = []
+  afterEntries.forEach((afterEntry) => {
+    if (!beforeEntries.some((beforeEntry) => beforeEntry[0] === afterEntry[0]))
+      removeDependencies.push(`${afterEntry[0]}: ${afterEntry[1]}`)
   })
-  return result
+
+  const removeDependencies = []
+  beforeEntries.forEach((beforeEntry) => {
+    if (!afterEntries.some((afterEntry) => beforeEntry[0] === afterEntry[0]))
+      removeDependencies.push(`${beforeEntry[0]}: ${beforeEntry[1]}`)
+  })
+
+  const updateDependencies = []
+  beforeEntries.forEach((beforeEntry) => {
+    const find = afterEntries.find(
+      (afterEntry) => beforeEntry[0] === afterEntry[0],
+    )
+    if (find && beforeEntry[1] !== find[1])
+      updateDependencies.push(
+        `${beforeEntry[0]}: ${beforeEntry[1]} ⇒ ${find[1]}`,
+      )
+  })
+
+  return { addDependencies, updateDependencies, removeDependencies }
 }
 
 const hasModifiedPackageJson =
@@ -46,26 +57,24 @@ schedule(async () => {
   const afterDevDependencies = packageDiff.devDependencies?.after
 
   if (beforeDependencies && afterDependencies) {
-    const removeDependencies = diffObject(beforeDependencies, afterDependencies)
-    const addDependencies = diffObject(afterDependencies, beforeDependencies)
-    if (removeDependencies.length)
-      message(`Dependencies削除: ${removeDependencies.join(', ')}`)
+    const { addDependencies, updateDependencies, removeDependencies } =
+      diffDependencies(beforeDependencies, afterDependencies)
     if (addDependencies.length)
       message(`Dependencies追加: ${addDependencies.join(', ')}`)
+    if (updateDependencies.length)
+      message(`Dependencies更新: ${updateDependencies.join(', ')}`)
+    if (removeDependencies.length)
+      message(`Dependencies削除: ${removeDependencies.join(', ')}`)
   }
 
   if (beforeDevDependencies && afterDevDependencies) {
-    const removeDevDependencies = diffObject(
-      beforeDevDependencies,
-      afterDevDependencies,
-    )
-    const addDevDependencies = diffObject(
-      afterDevDependencies,
-      beforeDevDependencies,
-    )
-    if (removeDevDependencies.length)
-      message(`DevDependencies削除: ${removeDevDependencies.join(', ')}`)
+    const { addDevDependencies, updateDevDependencies, removeDevDependencies } =
+      diffDependencies(beforeDevDependencies, afterDevDependencies)
     if (addDevDependencies.length)
       message(`DevDependencies追加: ${addDevDependencies.join(', ')}`)
+    if (updateDevDependencies.length)
+      message(`Dependencies更新: ${updateDevDependencies.join(', ')}`)
+    if (removeDevDependencies.length)
+      message(`DevDependencies削除: ${removeDevDependencies.join(', ')}`)
   }
 })
