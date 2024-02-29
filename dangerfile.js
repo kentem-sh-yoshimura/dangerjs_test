@@ -6,25 +6,28 @@ const diffDependencies = (before, after) => {
 
   const addDependencies = []
   afterEntries.forEach((afterEntry) => {
+    // beforeに同じkeyが無ければ追加判定
     if (!beforeEntries.some((beforeEntry) => beforeEntry[0] === afterEntry[0]))
       addDependencies.push(`${afterEntry[0]}: ${afterEntry[1]}`)
   })
 
+  const updateDependencies = []
   const removeDependencies = []
   beforeEntries.forEach((beforeEntry) => {
-    if (!afterEntries.some((afterEntry) => beforeEntry[0] === afterEntry[0]))
-      removeDependencies.push(`${beforeEntry[0]}: ${beforeEntry[1]}`)
-  })
-
-  const updateDependencies = []
-  beforeEntries.forEach((beforeEntry) => {
+    // afterに同じkeyがあるが、valueが違えば更新判定
     const find = afterEntries.find(
       (afterEntry) => beforeEntry[0] === afterEntry[0],
     )
-    if (find && beforeEntry[1] !== find[1])
+    if (find && beforeEntry[1] !== find[1]) {
       updateDependencies.push(
         `${beforeEntry[0]}: ${beforeEntry[1]} ⇒ ${find[1]}`,
       )
+      return
+    }
+
+    // afterに同じkeyが無ければ削除判定
+    if (!afterEntries.some((afterEntry) => beforeEntry[0] === afterEntry[0]))
+      removeDependencies.push(`${beforeEntry[0]}: ${beforeEntry[1]}`)
   })
 
   return { addDependencies, updateDependencies, removeDependencies }
