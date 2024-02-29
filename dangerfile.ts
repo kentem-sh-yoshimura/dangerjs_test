@@ -17,10 +17,10 @@ if (hasModifiedPackageJson && !hasModifiedPackageLockJson)
     'package.jsonが修正されていますが、package-lock.jsonが修正されていないようです。',
   )
 
-schedule(async () => {
-  const packageDiff = await danger.git.JSONDiffForFile('package.json')
+// schedule(async () => {
+//   const packageDiff = await danger.git.JSONDiffForFile('package.json')
 
-  message(packageDiff.dependencies?.added ? packageDiff.dependencies.added.join(',') : '')
-  message(packageDiff.dependencies?.removed ? packageDiff.dependencies.removed.join(',') : '')
+//   message(packageDiff.dependencies?.added ? packageDiff.dependencies.added.join(',') : '')
+//   message(packageDiff.dependencies?.removed ? packageDiff.dependencies.removed.join(',') : '')
 
-})
+// })
