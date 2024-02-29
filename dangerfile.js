@@ -53,6 +53,11 @@ schedule(async () => {
   const beforeDevDependencies = packageDiff.devDependencies?.before
   const afterDevDependencies = packageDiff.devDependencies?.after
 
+  message(beforeDependencies ?? 'beforeDependencies')
+  message(afterDependencies ?? 'afterDependencies')
+  message(beforeDevDependencies ?? 'beforeDevDependencies')
+  message(afterDevDependencies ?? 'afterDevDependencies')
+
   if (beforeDependencies && afterDependencies) {
     const removeDependencies = diffJson(
       beforeDependencies,
