@@ -73,7 +73,7 @@ schedule(async () => {
     if (addDevDependencies.length)
       message(`DevDependencies追加: ${addDevDependencies.join(', ')}`)
     if (updateDevDependencies.length)
-      message(`Dependencies更新: ${updateDevDependencies.join(', ')}`)
+      message(`DevDependencies更新: ${updateDevDependencies.join(', ')}`)
     if (removeDevDependencies.length)
       message(`DevDependencies削除: ${removeDevDependencies.join(', ')}`)
   }
