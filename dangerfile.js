@@ -68,8 +68,11 @@ schedule(async () => {
   }
 
   if (beforeDevDependencies && afterDevDependencies) {
-    const { addDevDependencies, updateDevDependencies, removeDevDependencies } =
-      diffDependencies(beforeDevDependencies, afterDevDependencies)
+    const {
+      addDependencies: addDevDependencies,
+      updateDependencies: updateDevDependencies,
+      removeDependencies: removeDevDependencies,
+    } = diffDependencies(beforeDevDependencies, afterDevDependencies)
     if (addDevDependencies.length)
       message(`DevDependencies追加: ${addDevDependencies.join(', ')}`)
     if (updateDevDependencies.length)
