@@ -7,7 +7,7 @@ const diffDependencies = (before, after) => {
   const addDependencies = []
   afterEntries.forEach((afterEntry) => {
     if (!beforeEntries.some((beforeEntry) => beforeEntry[0] === afterEntry[0]))
-      removeDependencies.push(`${afterEntry[0]}: ${afterEntry[1]}`)
+      addDependencies.push(`${afterEntry[0]}: ${afterEntry[1]}`)
   })
 
   const removeDependencies = []
@@ -73,7 +73,7 @@ schedule(async () => {
     if (addDevDependencies.length)
       message(`DevDependencies追加: ${addDevDependencies.join(', ')}`)
     if (updateDevDependencies.length)
-      message(`DevDependencies更新: ${updateDevDependencies.join(', ')}`)
+      message(`Dependencies更新: ${updateDevDependencies.join(', ')}`)
     if (removeDevDependencies.length)
       message(`DevDependencies削除: ${removeDevDependencies.join(', ')}`)
   }
