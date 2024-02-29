@@ -1,31 +1,25 @@
 import { danger, message, schedule, warn } from 'danger'
 
-const diffJson = (obj1: Object, obj2: Object): Object =>{
-  let diff: Object = {};
- 
-  for (const key in obj1) {
-     if (obj1.hasOwnProperty(key)) {
-       const value1 = obj1[key];
-       const value2 = obj2[key];
- 
-       if (value1 instanceof Object && value2 instanceof Object) {
-         const nestedDiff = diffJson(value1, value2);
-         if (Object.keys(nestedDiff).length > 0) {
-           diff[key] = nestedDiff;
-         }
-       } else if (value1 !== value2) {
-         diff[key] = value2 !== undefined ? value2 : '削除';
-       }
-     }
-  }
+const diffJson = (obj1: Object, obj2: Object): Object => {
+  const diff: Object = {}
 
-  for (const key in obj2) {
-    if (obj2.hasOwnProperty(key) && !obj1.hasOwnProperty(key)) {
-      diff[key] = obj2[key];
+  for (const key in obj1)
+    if (obj1.hasOwnProperty(key)) {
+      const value1 = obj1[key]
+      const value2 = obj2[key]
+
+      if (value1 instanceof Object && value2 instanceof Object) {
+        const nestedDiff = diffJson(value1, value2)
+        if (Object.keys(nestedDiff).length > 0) diff[key] = nestedDiff
+      } else if (value1 !== value2)
+        diff[key] = value2 !== undefined ? value2 : '削除'
     }
- }
 
- return diff;
+  for (const key in obj2)
+    if (obj2.hasOwnProperty(key) && !obj1.hasOwnProperty(key))
+      diff[key] = obj2[key]
+
+  return diff
 }
 
 const hasModifiedPackageJson =
@@ -46,7 +40,7 @@ if (hasModifiedPackageJson && !hasModifiedPackageLockJson)
   )
 
 schedule(async () => {
-  if(!hasModifiedPackageJson) return
+  if (!hasModifiedPackageJson) return
   const packageDiff = await danger.git.JSONDiffForFile('package.json')
 
   // if(packageDiff.dependencies?.added?.length)message(packageDiff.dependencies.added.join(',') )
@@ -59,16 +53,28 @@ schedule(async () => {
   const beforeDevDependencies = packageDiff.devDependencies?.before
   const afterDevDependencies = packageDiff.devDependencies?.after
 
-if(beforeDependencies && afterDependencies){
-  const removeDependencies = diffJson(beforeDependencies,afterDependencies).toString()
-  const addDependencies = diffJson(afterDependencies,beforeDependencies).toString()
-  if(removeDependencies)message(removeDependencies)
-  if(addDependencies)message(addDependencies)
-}
-if(beforeDevDependencies && afterDevDependencies){
-  const removeDevDependencies = diffJson(beforeDevDependencies,afterDevDependencies).toString()
-  const addDevDependencies = diffJson(afterDevDependencies,beforeDevDependencies).toString()
-  if(removeDevDependencies)message(removeDevDependencies)
-  if(addDevDependencies)message(addDevDependencies)
-}
+  if (beforeDependencies && afterDependencies) {
+    const removeDependencies = diffJson(
+      beforeDependencies,
+      afterDependencies,
+    ).toString()
+    const addDependencies = diffJson(
+      afterDependencies,
+      beforeDependencies,
+    ).toString()
+    if (removeDependencies) message(removeDependencies)
+    if (addDependencies) message(addDependencies)
+  }
+  if (beforeDevDependencies && afterDevDependencies) {
+    const removeDevDependencies = diffJson(
+      beforeDevDependencies,
+      afterDevDependencies,
+    ).toString()
+    const addDevDependencies = diffJson(
+      afterDevDependencies,
+      beforeDevDependencies,
+    ).toString()
+    if (removeDevDependencies) message(removeDevDependencies)
+    if (addDevDependencies) message(addDevDependencies)
+  }
 })
