@@ -21,9 +21,9 @@ schedule(async () => {
   if(!hasModifiedPackageJson) return
   const packageDiff = await danger.git.JSONDiffForFile('package.json')
 
-  if(packageDiff.dependencies?.added)message(packageDiff.dependencies.added.join(',') )
-  if(packageDiff.dependencies?.removed)message(packageDiff.dependencies.removed.join(','))
-  if(packageDiff.devDependencies?.added)message(packageDiff.devDependencies.added.join(',') )
-  if(packageDiff.devDependencies?.removed)message(packageDiff.devDependencies.removed.join(','))
+  if(packageDiff.dependencies?.added?.length)message(packageDiff.dependencies.added.join(',') )
+  if(packageDiff.dependencies?.removed?.length)message(packageDiff.dependencies.removed.join(','))
+  if(packageDiff.devDependencies?.added?.length)message(packageDiff.devDependencies.added.join(',') )
+  if(packageDiff.devDependencies?.removed?.length)message(packageDiff.devDependencies.removed.join(','))
 
 })
