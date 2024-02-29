@@ -62,11 +62,11 @@ schedule(async () => {
     const removeDependencies = diffJson(
       beforeDependencies,
       afterDependencies,
-    ).toString()
+    )
     const addDependencies = diffJson(
       afterDependencies,
       beforeDependencies,
-    ).toString()
+    )
     if (removeDependencies) message(`5 ${JSON.stringify(removeDependencies)}`)
     if (addDependencies) message(`6 ${JSON.stringify(addDependencies)}`)
   }
@@ -74,11 +74,11 @@ schedule(async () => {
     const removeDevDependencies = diffJson(
       beforeDevDependencies,
       afterDevDependencies,
-    ).toString()
+    )
     const addDevDependencies = diffJson(
       afterDevDependencies,
       beforeDevDependencies,
-    ).toString()
+    )
     if (removeDevDependencies) message(`7 ${JSON.stringify(removeDevDependencies)}`)
     if (addDevDependencies) message(`8 ${JSON.stringify(addDevDependencies)}`)
   }
