@@ -10,15 +10,18 @@ concurrency:
 permissions:
   pull-requests: write
 
-
 jobs:
-  build:
+  checkout:
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Danger JS
+  Damger-JS:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Danger-JS
         # usesがエラーになるissues解決待ち
         # https://github.com/github/vscode-github-actions/issues/143
         uses: danger/danger-js@11.3.1
