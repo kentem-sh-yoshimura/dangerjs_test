@@ -8,9 +8,7 @@ concurrency:
   cancel-in-progress: true
 
 permissions:
-  id-token: 
   pull-requests: write
-
 
 jobs:
   checkout:
