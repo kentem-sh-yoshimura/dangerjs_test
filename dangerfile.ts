@@ -23,5 +23,7 @@ schedule(async () => {
 
   if(packageDiff.dependencies?.added)message(packageDiff.dependencies.added.join(',') )
   if(packageDiff.dependencies?.removed)message(packageDiff.dependencies.removed.join(','))
+  if(packageDiff.devDependencies?.added)message(packageDiff.devDependencies.added.join(',') )
+  if(packageDiff.devDependencies?.removed)message(packageDiff.devDependencies.removed.join(','))
 
 })
