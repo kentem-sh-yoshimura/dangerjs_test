@@ -12,7 +12,7 @@ const diffJson = (obj1, obj2) => {
         const nestedDiff = diffJson(value1, value2)
         if (Object.keys(nestedDiff).length > 0) diff[key] = nestedDiff
       } else if (value1 !== value2)
-        diff[key] = value2 !== undefined ? value2 : '削除'
+        if(value2 !== undefined)value2
     }
 
   for (const key in obj2)
@@ -43,20 +43,10 @@ schedule(async () => {
   if (!hasModifiedPackageJson) return
   const packageDiff = await danger.git.JSONDiffForFile('package.json')
 
-  // if(packageDiff.dependencies?.added?.length)message(packageDiff.dependencies.added.join(',') )
-  // if(packageDiff.dependencies?.removed?.length)message(packageDiff.dependencies.removed.join(','))
-  // if(packageDiff.devDependencies?.added?.length)message(packageDiff.devDependencies.added.join(',') )
-  // if(packageDiff.devDependencies?.removed?.length)message(packageDiff.devDependencies.removed.join(','))
-
   const beforeDependencies = packageDiff.dependencies?.before
   const afterDependencies = packageDiff.dependencies?.after
   const beforeDevDependencies = packageDiff.devDependencies?.before
   const afterDevDependencies = packageDiff.devDependencies?.after
-
-  if(beforeDependencies)message(`1 ${JSON.stringify(beforeDependencies)}`)
-  if(afterDependencies)message(`2 ${JSON.stringify(afterDependencies)}`)
-  if(beforeDevDependencies)message(`3 ${JSON.stringify(beforeDevDependencies)}`)
-  if(afterDevDependencies)message(`4 ${JSON.stringify(afterDevDependencies)}`)
 
   if (beforeDependencies && afterDependencies) {
     const removeDependencies = diffJson(
