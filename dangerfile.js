@@ -64,11 +64,11 @@ schedule(async () => {
     const { addDependencies, updateDependencies, removeDependencies } =
       diffDependencies(beforeDependencies, afterDependencies)
     if (addDependencies.length)
-      message(`Dependencies追加: ${addDependencies.join(',<br>')}`)
+      message(`Dependencies 追加➕<br>　${addDependencies.join('　<br>')}`)
     if (updateDependencies.length)
-      message(`Dependencies更新: ${updateDependencies.join(',<br>')}`)
+      message(`Dependencies 更新🆙<br>　${updateDependencies.join('　<br>')}`)
     if (removeDependencies.length)
-      message(`Dependencies削除: ${removeDependencies.join(',<br>')}`)
+      message(`Dependencies 削除➖<br>　${removeDependencies.join('　<br>')}`)
   }
 
   if (beforeDevDependencies && afterDevDependencies) {
@@ -78,10 +78,10 @@ schedule(async () => {
       removeDependencies: removeDevDependencies,
     } = diffDependencies(beforeDevDependencies, afterDevDependencies)
     if (addDevDependencies.length)
-      message(`DevDependencies追加: ${addDevDependencies.join(',<br>')}`)
+      message(`DevDependencies 追加➕<br>　${addDevDependencies.join('　<br>')}`)
     if (updateDevDependencies.length)
-      message(`DevDependencies更新: ${updateDevDependencies.join(',<br>')}`)
+      message(`DevDependencies 更新🆙<br>　${updateDevDependencies.join('　<br>')}`)
     if (removeDevDependencies.length)
-      message(`DevDependencies削除: ${removeDevDependencies.join(',<br>')}`)
+      message(`DevDependencies 削除➖<br>　${removeDevDependencies.join('　<br>')}`)
   }
 })
