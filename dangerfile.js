@@ -78,10 +78,10 @@ schedule(async () => {
       removeDependencies: removeDevDependencies,
     } = diffDependencies(beforeDevDependencies, afterDevDependencies)
     if (addDevDependencies.length)
-      message(`DevDependencies追加: ${addDevDependencies.join(', ')}`)
+      message(`DevDependencies追加: ${addDevDependencies.join(',<br>')}`)
     if (updateDevDependencies.length)
-      message(`DevDependencies更新: ${updateDevDependencies.join(', ')}`)
+      message(`DevDependencies更新: ${updateDevDependencies.join(',<br>')}`)
     if (removeDevDependencies.length)
-      message(`DevDependencies削除: ${removeDevDependencies.join(', ')}`)
+      message(`DevDependencies削除: ${removeDevDependencies.join(',<br>')}`)
   }
 })
