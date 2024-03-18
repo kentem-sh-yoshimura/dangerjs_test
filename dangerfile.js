@@ -51,6 +51,7 @@ if (hasModifiedPackageJson && !hasModifiedPackageLockJson)
   )
 
 schedule(async () => {
+  // package.jsonに修正があれば、依存関係の更新チェック
   if (!hasModifiedPackageJson) return
   const packageDiff = await danger.git.JSONDiffForFile('package.json')
 
@@ -63,11 +64,11 @@ schedule(async () => {
     const { addDependencies, updateDependencies, removeDependencies } =
       diffDependencies(beforeDependencies, afterDependencies)
     if (addDependencies.length)
-      message(`Dependencies追加: ${addDependencies.join(', ')}`)
+      message(`Dependencies追加: ${addDependencies.join(',<br>')}`)
     if (updateDependencies.length)
-      message(`Dependencies更新: ${updateDependencies.join(', ')}`)
+      message(`Dependencies更新: ${updateDependencies.join(',<br>')}`)
     if (removeDependencies.length)
-      message(`Dependencies削除: ${removeDependencies.join(', ')}`)
+      message(`Dependencies削除: ${removeDependencies.join(',<br>')}`)
   }
 
   if (beforeDevDependencies && afterDevDependencies) {
@@ -79,7 +80,7 @@ schedule(async () => {
     if (addDevDependencies.length)
       message(`DevDependencies追加: ${addDevDependencies.join(', ')}`)
     if (updateDevDependencies.length)
-      message(`Dependencies更新: ${updateDevDependencies.join(', ')}`)
+      message(`DevDependencies更新: ${updateDevDependencies.join(', ')}`)
     if (removeDevDependencies.length)
       message(`DevDependencies削除: ${removeDevDependencies.join(', ')}`)
   }
