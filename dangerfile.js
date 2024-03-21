@@ -1,26 +1,37 @@
 import { danger, message, schedule, warn } from 'danger'
 
-const diffJson = (obj1, obj2) => {
-  const diff = {}
+const diffDependencies = (before, after) => {
+  const beforeEntries = Object.entries(before)
+  const afterEntries = Object.entries(after)
 
-  for (const key in obj1)
-    if (obj1.hasOwnProperty(key)) {
-      const value1 = obj1[key]
-      const value2 = obj2[key]
+  const addDependencies = []
+  afterEntries.forEach((afterEntry) => {
+    // beforeに同じkeyが無ければ追加判定
+    if (!beforeEntries.some((beforeEntry) => beforeEntry[0] === afterEntry[0]))
+      addDependencies.push(`${afterEntry[0]}: ${afterEntry[1]}`)
+  })
 
-      if (value1 instanceof Object && value2 instanceof Object) {
-        const nestedDiff = diffJson(value1, value2)
-        if (Object.keys(nestedDiff).length > 0) diff[key] = nestedDiff
-      } else if (value1 !== value2)
-        diff[key] = value2 !== undefined ? value2 : '削除'
+  const updateDependencies = []
+  const removeDependencies = []
+  beforeEntries.forEach((beforeEntry) => {
+    // afterに同じkeyがあるが、valueが違えば更新判定
+    const find = afterEntries.find(
+      (afterEntry) => beforeEntry[0] === afterEntry[0],
+    )
+    if (find && beforeEntry[1] !== find[1]) {
+      updateDependencies.push(
+        `${beforeEntry[0]}: ${beforeEntry[1]} ⇒ ${find[1]}`,
+      )
+      return
     }
 
-  for (const key in obj2)
-    if (obj2.hasOwnProperty(key) && !obj1.hasOwnProperty(key))
-      diff[key] = obj2[key]
+    // afterに同じkeyが無ければ削除判定
+    if (!afterEntries.some((afterEntry) => beforeEntry[0] === afterEntry[0]))
+      removeDependencies.push(`${beforeEntry[0]}: ${beforeEntry[1]}`)
+  })
 
-  return diff
-} 
+  return { addDependencies, updateDependencies, removeDependencies }
+}
 
 const hasModifiedPackageJson =
   danger.git.modified_files.includes('package.json')
@@ -40,46 +51,43 @@ if (hasModifiedPackageJson && !hasModifiedPackageLockJson)
   )
 
 schedule(async () => {
+  // package.jsonに修正があれば、依存関係の更新チェック
   if (!hasModifiedPackageJson) return
   const packageDiff = await danger.git.JSONDiffForFile('package.json')
-
-  // if(packageDiff.dependencies?.added?.length)message(packageDiff.dependencies.added.join(',') )
-  // if(packageDiff.dependencies?.removed?.length)message(packageDiff.dependencies.removed.join(','))
-  // if(packageDiff.devDependencies?.added?.length)message(packageDiff.devDependencies.added.join(',') )
-  // if(packageDiff.devDependencies?.removed?.length)message(packageDiff.devDependencies.removed.join(','))
 
   const beforeDependencies = packageDiff.dependencies?.before
   const afterDependencies = packageDiff.dependencies?.after
   const beforeDevDependencies = packageDiff.devDependencies?.before
   const afterDevDependencies = packageDiff.devDependencies?.after
 
-  if(beforeDependencies)message(`1 ${JSON.stringify(beforeDependencies)}`)
-  if(afterDependencies)message(`2 ${JSON.stringify(afterDependencies)}`)
-  if(beforeDevDependencies)message(`3 ${JSON.stringify(beforeDevDependencies)}`)
-  if(afterDevDependencies)message(`4 ${JSON.stringify(afterDevDependencies)}`)
-
   if (beforeDependencies && afterDependencies) {
-    const removeDependencies = diffJson(
-      beforeDependencies,
-      afterDependencies,
-    ).toString()
-    const addDependencies = diffJson(
-      afterDependencies,
-      beforeDependencies,
-    ).toString()
-    if (removeDependencies) message(`5 ${removeDependencies}`)
-    if (addDependencies) message(`6 ${addDependencies}`)
+    const { addDependencies, updateDependencies, removeDependencies } =
+      diffDependencies(beforeDependencies, afterDependencies)
+    if (addDependencies.length)
+      message(`Dependencies 追加🆕<br>- ${addDependencies.join('<br>- ')}`)
+    if (updateDependencies.length)
+      message(`Dependencies 更新🆙<br>- ${updateDependencies.join('<br>- ')}`)
+    if (removeDependencies.length)
+      message(`Dependencies 削除❌<br>- ${removeDependencies.join('<br>- ')}`)
   }
+
   if (beforeDevDependencies && afterDevDependencies) {
-    const removeDevDependencies = diffJson(
-      beforeDevDependencies,
-      afterDevDependencies,
-    ).toString()
-    const addDevDependencies = diffJson(
-      afterDevDependencies,
-      beforeDevDependencies,
-    ).toString()
-    if (removeDevDependencies) message(`7 ${removeDevDependencies}`)
-    if (addDevDependencies) message(`8 ${addDevDependencies}`)
+    const {
+      addDependencies: addDevDependencies,
+      updateDependencies: updateDevDependencies,
+      removeDependencies: removeDevDependencies,
+    } = diffDependencies(beforeDevDependencies, afterDevDependencies)
+    if (addDevDependencies.length)
+      message(
+        `DevDependencies 追加🆕<br>- ${addDevDependencies.join('<br>- ')}`,
+      )
+    if (updateDevDependencies.length)
+      message(
+        `DevDependencies 更新🆙<br>- ${updateDevDependencies.join('<br>- ')}`,
+      )
+    if (removeDevDependencies.length)
+      message(
+        `DevDependencies 削除❌<br>- ${removeDevDependencies.join('<br>- ')}`,
+      )
   }
 })
